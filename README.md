@@ -1,4 +1,4 @@
-# Atlas Directory – Identity Console
+# UAM
 
 A web-based Active Directory management console, rebuilt as a standalone, front-end-only demo for my portfolio.
 
