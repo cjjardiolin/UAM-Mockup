@@ -96,7 +96,7 @@ The mockup keeps the interaction design but deliberately leaves out the sensitiv
 Systems Engineer & Cloud Solutions Architect, Metro Manila, Philippines
 
 - Email: christianjardiolin@outlook.com
-- LinkedIn: [christian-joseph-jardiolin](https://linkedin.com/in/christian-joseph-jardiolin-7b7370159)
+- LinkedIn: [christian-jardiolin](https://www.linkedin.com/in/christian-jardiolin/)
 
 Open to part-time and contract remote roles aligned to Australian and APAC hours.
 
