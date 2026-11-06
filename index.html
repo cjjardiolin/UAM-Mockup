@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Atlas Directory – Identity Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#eef1f4;--panel:#fff;--ink:#1b2733;--mute:#64748b;--line:#d9e0e7;--brand:#0f5c6e;--brand-ink:#fff;--soft:#e3f0f3;--ok:#1f8a4c;--bad:#c4381f;--warn:#fff4d6;--warnb:#e0b43a;color-scheme:light}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111a21;--panel:#18232c;--ink:#e6edf3;--mute:#8fa1b2;--line:#2a3945;--brand:#4fb3c9;--brand-ink:#08222a;--soft:#1d3640;--ok:#4cc380;--bad:#ff7a60;--warn:#3a3118;--warnb:#a7842a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111a21;--panel:#18232c;--ink:#e6edf3;--mute:#8fa1b2;--line:#2a3945;--brand:#4fb3c9;--brand-ink:#08222a;--soft:#1d3640;--ok:#4cc380;--bad:#ff7a60;--warn:#3a3118;--warnb:#a7842a;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+header{background:var(--brand);color:var(--brand-ink);display:flex;gap:16px;align-items:center;padding:10px 20px;flex-wrap:wrap}
+.logo{font-weight:600;font-size:17px;letter-spacing:.2px;cursor:pointer}
+.logo small{font-weight:400;opacity:.8;margin-left:8px}
+form.s{flex:1;min-width:220px;max-width:560px;display:flex;margin-left:auto}
+form.s input{flex:1;padding:8px 12px;border:0;border-radius:6px 0 0 6px;font:inherit;background:#fff;color:#1b2733}
+form.s button{border:0;padding:0 16px;border-radius:0 6px 6px 0;background:#08222a;color:#fff;font:inherit;cursor:pointer}
+main{max-width:1280px;margin:20px auto;padding:0 16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;margin-bottom:16px}
+.ch{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ch h2{font-size:15px;margin:0;font-weight:600;flex:1}
+.cb{padding:16px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--mute);white-space:nowrap}
+tbody tr:hover{background:var(--soft)}
+button,.btn{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:6px}
+button.p,.btn.p{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+button.d{border-color:var(--bad);color:var(--bad)}
+button:hover{filter:brightness(.95)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.sm{padding:3px 9px;font-size:12px}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:4px 32px}
+.row{display:flex;gap:12px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.row .k{flex:0 0 42%;color:var(--mute)}
+.row .v{flex:1;word-break:break-word;font-weight:500}
+.tag{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;font-weight:600;background:var(--soft)}
+.tag.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.tag.bad{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad)}
+details{border:1px solid var(--line);border-radius:8px;margin-bottom:12px;background:var(--panel)}
+summary{padding:11px 16px;font-weight:600;cursor:pointer}
+details>div{padding:4px 16px 16px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.box{max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+.box h3{margin:0;padding:8px 10px;font-size:13px;position:sticky;top:0;background:var(--panel);border-bottom:1px solid var(--line)}
+dialog{border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);padding:0;width:min(560px,94vw)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog .mh{padding:12px 16px;font-weight:600;border-bottom:1px solid var(--line)}
+dialog .mb{padding:16px;max-height:65vh;overflow:auto}
+dialog .mf{padding:12px 16px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
+.warn{background:var(--warn);border:1px solid var(--warnb);border-radius:6px;padding:10px 12px;margin-bottom:8px}
+label{display:block;margin:10px 0 3px;color:var(--mute)}
+input[type=text],input[type=password]{width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:13px Consolas,monospace}
+.opt{display:inline-flex;gap:5px;margin:6px 14px 0 0;color:var(--ink)}
+#toast{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;z-index:50}
+#toast div{background:#1b2733;color:#fff;padding:10px 14px;border-radius:6px;border-left:4px solid var(--ok);max-width:340px}
+#toast .e{border-color:var(--bad)}
+.note{color:var(--mute);font-size:12px;padding:0 4px 12px}
+a{color:var(--brand)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo" onclick="location.hash='home'">Atlas Directory<small>Identity Console</small></div>
+  <form class="s" id="sf"><input id="q" placeholder="Search name, logon, email, employee number…" autocomplete="off"><button>Search</button></form>
+</header>
+<main id="app"></main>
+<div id="toast"></div>
+<dialog id="dlg"><div class="mh" id="dh"></div><div class="mb" id="db"></div><div class="mf" id="df"></div></dialog>
+
+<script>
+// ---------- Mock directory (all fictional) ----------
+const U=[
+{id:"a1f3",sam:"mreyes",first:"Maria",last:"Reyes",title:"Senior Network Engineer",dept:"IT Infrastructure",office:"Manila HQ",country:"Philippines",city:"Makati",street:"12 Ayala Ave",emp:"100234",mgr:"b7c2",mail:"maria.reyes@contoso-demo.com",mobile:"+63 917 555 0142",server:"dc01.corp.demo",desc:"Network team – shift lead",exp:"Never",locked:false,enabled:true,pwSet:"2026-09-02 08:14",pwAge:"65 days",pwLeft:"25 days (exp 2026-12-01)",groups:[["VPN-Users","OU=Groups,OU=Global"],["NetOps-Admins","OU=Security,OU=Global"],["All-Staff-PH","OU=Distribution,OU=PH"],["Wiki-Editors","OU=Apps,OU=Global"]],proxy:["SMTP:maria.reyes@contoso-demo.com","smtp:mreyes@contoso-demo.com","smtp:m.reyes@corp.demo"],managed:["NetOps-Alerts (DL)","Manila-Switches (Group)"],dlBL:["helpdesk-shared@contoso-demo.com"],dl:["netops-oncall@contoso-demo.com"],devices:[["PH-LT-04418","ThinkPad X1 – primary"],["PH-DT-00921","Lab workstation"]]},
+{id:"b7c2",sam:"jtan",first:"Jonathan",last:"Tan",title:"Head of IT Operations",dept:"IT Infrastructure",office:"Manila HQ",country:"Philippines",city:"Makati",street:"12 Ayala Ave",emp:"100010",mgr:"",mail:"jonathan.tan@contoso-demo.com",mobile:"+63 917 555 0100",server:"dc01.corp.demo",desc:"",exp:"Never",locked:false,enabled:true,pwSet:"2026-08-11 10:02",pwAge:"87 days",pwLeft:"3 days (exp 2026-11-09)",groups:[["IT-Leadership","OU=Groups,OU=Global"],["All-Staff-PH","OU=Distribution,OU=PH"]],proxy:["SMTP:jonathan.tan@contoso-demo.com"],managed:[],dlBL:[],dl:[],devices:[["PH-LT-00112","Executive laptop"]]},
+{id:"c9d4",sam:"lwong",first:"Li",last:"Wong",title:"Service Desk Analyst",dept:"IT Support",office:"Singapore",country:"Singapore",city:"Singapore",street:"1 Raffles Quay",emp:"204551",mgr:"b7c2",mail:"li.wong@contoso-demo.com",mobile:"+65 8555 0177",server:"dc02.corp.demo",desc:"Locked after repeated bad passwords – INC0044821",exp:"Never",locked:true,enabled:true,pwSet:"2026-10-20 14:40",pwAge:"17 days",pwLeft:"73 days (exp 2027-01-18)",groups:[["Helpdesk-L1","OU=Security,OU=Global"],["All-Staff-SG","OU=Distribution,OU=SG"]],proxy:["SMTP:li.wong@contoso-demo.com"],managed:[],dlBL:[],dl:["helpdesk-shared@contoso-demo.com"],devices:[["SG-LT-01377","Dell Latitude"]]},
+{id:"d2e8",sam:"pnair",first:"Priya",last:"Nair",title:"Finance Analyst",dept:"Finance",office:"Mumbai",country:"India",city:"Mumbai",street:"BKC Tower 2",emp:"310882",mgr:"b7c2",mail:"priya.nair@contoso-demo.com",mobile:"+91 98555 01234",server:"dc03.corp.demo",desc:"Terminated by HR 2026-10-30 – RITM0102933. DO NOT RESET",exp:"2026-10-30",locked:false,enabled:false,pwSet:"2026-10-30 17:05",pwAge:"7 days",pwLeft:"Expired",groups:[["Finance-Reports","OU=Security,OU=IN"]],proxy:["SMTP:priya.nair@contoso-demo.com"],managed:[],dlBL:[],dl:[],devices:[["IN-LT-00731","Returned – pending wipe"]]},
+{id:"e5a1",sam:"dcarter",first:"Daniel",last:"Carter",title:"Project Manager",dept:"Projects",office:"Sydney",country:"Australia",city:"Sydney",street:"200 George St",emp:"412003",mgr:"b7c2",mail:"daniel.carter@contoso-demo.com",mobile:"+61 400 555 019",server:"dc02.corp.demo",desc:"Re-hire account request tracked in RITM0099120",exp:"Never",locked:false,enabled:true,pwSet:"2026-09-28 09:00",pwAge:"39 days",pwLeft:"51 days (exp 2026-12-27)",groups:[["PMO","OU=Groups,OU=AU"],["All-Staff-AU","OU=Distribution,OU=AU"]],proxy:["SMTP:daniel.carter@contoso-demo.com","smtp:dcarter@contoso-demo.com"],managed:["PMO-Shared (Mailbox)"],dlBL:["pmo-shared@contoso-demo.com"],dl:[],devices:[["AU-LT-02210","MacBook Pro 14"]]},
+{id:"f6b3",sam:"mreynolds",first:"Marcus",last:"Reynolds",title:"Security Architect",dept:"Information Security",office:"London",country:"United Kingdom",city:"London",street:"30 Fenchurch St",emp:"150771",mgr:"b7c2",mail:"marcus.reynolds@contoso-demo.com",mobile:"+44 7700 900123",server:"dc04.corp.demo",desc:"",exp:"Never",locked:false,enabled:true,pwSet:"2026-10-05 11:30",pwAge:"32 days",pwLeft:"58 days (exp 2027-01-03)",groups:[["SecOps","OU=Security,OU=UK"],["PAM-Approvers","OU=Security,OU=Global"]],proxy:["SMTP:marcus.reynolds@contoso-demo.com"],managed:["SecOps-Alerts (DL)"],dlBL:[],dl:["secops-oncall@contoso-demo.com"],devices:[["UK-LT-00988","ThinkPad T14"]]},
+{id:"g8c5",sam:"cjardiolin",first:"Christian Joseph",last:"Jardiolin",title:"Systems Engineer & Cloud Solutions Architect",dept:"IT Infrastructure",office:"Metro Manila",country:"Philippines",city:"Metro Manila",street:"Remote",emp:"100777",mgr:"b7c2",mail:"christianjardiolin@outlook.com",mobile:"Available on request",server:"dc01.corp.demo",desc:"https://www.linkedin.com/in/christian-jardiolin",exp:"Never",locked:false,enabled:true,pwSet:"2026-10-12 09:30",pwAge:"25 days",pwLeft:"65 days (exp 2027-01-10)",groups:[["Azure-Admins","OU=Security,OU=Global"],["Entra-Security-Operators","OU=Security,OU=Global"],["VMware-Horizon-Admins","OU=Security,OU=APAC"],["PowerShell-Automation","OU=Apps,OU=Global"],["All-Staff-PH","OU=Distribution,OU=PH"]],proxy:["SMTP:christianjardiolin@outlook.com","smtp:cjardiolin@corp.demo"],managed:["UAM-Tool-Admins (Group)","APAC-DFS-Shares (Group)"],dlBL:["apac-it-shared@contoso-demo.com"],dl:["apac-it-oncall@contoso-demo.com"],devices:[["PH-LT-05001","Primary laptop"],["PH-VM-HZN01","Horizon test desktop"]],certs:[["Azure Solutions Architect Expert (AZ-305)","Microsoft","Apr 2023","Active"],["Azure Administrator Associate (AZ-104)","Microsoft","Jun 2021","Active"],["Azure Fundamentals (AZ-900)","Microsoft","Jul 2020","Active"],["ITIL v4 Foundation (GR671212859CJ7)","AXELOS / PeopleCert","Dec 2020","Valid"],["Lean Six Sigma Yellow Belt (ICYB)","ICYB","Feb 2021","Valid"]]}
+];
+const byId=id=>U.find(u=>u.id===id);
+const LOGS={};
+const log=(u,ev)=>{(LOGS[u.id]=LOGS[u.id]||[]).unshift([new Date().toISOString().slice(0,19).replace("T"," "),"demo.agent",ev])};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let query="",cur=null;
+
+function toast(m,err){const d=document.createElement("div");d.textContent=m;if(err)d.className="e";$("#toast").append(d);setTimeout(()=>d.remove(),3800)}
+function modal(title,body,btns){$("#dh").innerHTML=title;$("#db").innerHTML=body;const f=$("#df");f.innerHTML="";
+  (btns||[]).concat([{t:"Close"}]).forEach(b=>{const e=document.createElement("button");e.textContent=b.t;if(b.c)e.className=b.c;e.onclick=()=>{if(!b.f||b.f()!==false)$("#dlg").close()};f.append(e)});
+  if(!$("#dlg").open)$("#dlg").showModal()}
+function xl(id,name){const t=document.getElementById(id);const wb=XLSX.utils.table_to_book(t,{sheet:"Sheet1"});
+  XLSX.writeFile(wb,name+"_"+new Date().toISOString().slice(0,19).replace(/[:T]/g,"-")+".xlsx")}
+const ex=(id,n)=>`<button class="sm" onclick="xl('${id}','${n}')">Extract</button>`;
+
+// ---------- Views ----------
+function home(){
+  const r=query?U.filter(u=>[u.first+" "+u.last,u.sam,u.mail,u.emp,u.title,u.dept,u.office].join(" ").toLowerCase().includes(query.toLowerCase())):[];
+  $("#app").innerHTML=`<div class="card"><div class="ch"><h2>Object management</h2>${query?ex("tbl_all","SearchResults"):""}</div>
+  <div class="cb">${query?`<p class="note">${r.length} result(s) for “${esc(query)}”. Try: reyes, locked users, finance, 2045…</p>`:`<p>Search the directory above to look up accounts, unlock users and reset passwords. This demo runs on fictional data held in memory, so nothing persists on refresh.</p><p class="note">Suggested searches: <a href="#" onclick="go('reyes');return false">reyes</a> · <a href="#" onclick="go('wong');return false">wong</a> (locked) · <a href="#" onclick="go('nair');return false">nair</a> (terminated) · <a href="#" onclick="go('carter');return false">carter</a> (ticket in description) · <a href="#" onclick="go('jardiolin');return false">jardiolin</a> (the portfolio owner)</p>`}
+  <div class="scroll"><table id="tbl_all"><thead><tr><th>Name</th><th>Emp number</th><th>Manager</th><th>Logon name</th><th>Email</th><th>Title</th><th>Country</th><th>Office</th><th>Department</th><th>Server</th><th></th></tr></thead><tbody>
+  ${r.map(u=>`<tr><td>${esc(u.first+" "+u.last)}</td><td>${u.emp}</td><td>${esc(u.mgr?byId(u.mgr).first+" "+byId(u.mgr).last:"")}</td><td>${u.sam}</td><td>${u.mail}</td><td>${esc(u.title)}</td><td>${u.country}</td><td>${u.office}</td><td>${u.dept}</td><td>${u.server}</td><td><button class="sm p" onclick="location.hash='user-${u.id}'">Properties</button></td></tr>`).join("")}
+  </tbody></table></div></div></div>`}
+function go(q){query=q;$("#q").value=q;location.hash==="#home"?home():location.hash="home"}
+
+const R=(k,v)=>`<div class="row"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+function user(){
+  const u=cur,m=u.mgr?byId(u.mgr):null,nm=u.first+" "+u.last;
+  const ticket=/RITM\d+|INC\d+/i.test(u.desc),term=/terminated|do not reset|disabled/i.test(u.desc)||!u.enabled;
+  const reports=U.filter(x=>x.mgr===u.id).map(x=>x.first+" "+x.last);
+  $("#app").innerHTML=`<div class="card"><div class="ch"><h2>Properties – ${esc(nm)}</h2><div class="actions">
+   <button class="p" onclick="doUnlock()">Unlock</button><button class="p" onclick="resetPw()">Reset password</button>
+   <button onclick="mgrModal()">Manager</button><button onclick="list('Proxy addresses',u_proxy())">Proxy addresses</button>
+   <button onclick="list('Managed objects',cur.managed)">Managed objects</button>
+   <button onclick="list('Public delegates BL',cur.dlBL,'Mailboxes that have access to send on behalf of this user.')">Delegates BL</button>
+   <button onclick="list('Public delegates',cur.dl,'Mailboxes this user can send on behalf of.')">Delegates</button>
+   <button onclick="toast('Edit view is not part of this demo','e')">Edit</button></div></div>
+  <div class="cb"><details open><summary>Properties</summary><div class="grid"><div>
+   ${R("First name",u.first)}${R("Last name",u.last)}${R("Display name",esc(nm))}${R("Description",`<span id="desc">${esc(u.desc)||"—"}</span>`)}${R("Office",u.office)}${R("Title",esc(u.title))}${R("Employee number",`<span class="tag">${u.emp}</span>`)}${R("Manager",m?esc(m.first+" "+m.last):"N/A")}${R("Mobile",u.mobile)}</div><div>
+   ${R("E-mail address",u.mail)}${R("UPN",u.sam+"@corp.demo")}${R("Logon name","CORP\\"+u.sam)}${R("Account expiration",u.exp)}
+   ${R("Account status",`<span class="tag ${u.locked?"bad":"ok"}">${u.locked?"Locked out":"Not locked"}</span> <span class="tag ${u.enabled?"ok":"bad"}">${u.enabled?"Enabled":"Disabled"}</span>`)}
+   ${R("Password last set",u.pwSet)}${R("Password age",`<span title="Valid for: ${u.pwLeft}">${u.pwAge}</span> <span class="note">(${u.pwLeft})</span>`)}${R("Last changed",u.pwSet)}</div></div></details>
+  <details open><summary>Extended properties</summary><div class="grid"><div>${R("Department",u.dept)}${R("Street",u.street)}${R("City",u.city)}${R("Country",u.country)}${R("OU location","corp.demo/"+u.country+"/Users")}${R("Recipient type","UserMailbox")}</div>
+   <div>${R("Employee ID","E"+u.emp)}${R("Commencement date","2021-03-15")}${R("Fax","N/A")}${R("IP phone","N/A")}${R("Home directory","\\\\fs01\\home\\"+u.sam)}${R("Hide from address list","False")}</div></div></details>
+  <details open><summary>Memberships / direct reports</summary><div class="two">
+   <div><div class="actions" style="margin-bottom:6px"><b style="flex:1">Member of</b>${ex("t_mem","Memberships")}</div><div class="box"><table id="t_mem"><thead><tr><th>Name</th><th>OU</th></tr></thead><tbody>${u.groups.map(g=>`<tr><td>${g[0]}</td><td>${g[1]}</td></tr>`).join("")||'<tr><td colspan="2">No data</td></tr>'}</tbody></table></div></div>
+   <div><div class="actions" style="margin-bottom:6px"><b style="flex:1">Direct reports</b>${ex("t_dr","DirectReports")}</div><div class="box"><table id="t_dr"><thead><tr><th>Name</th></tr></thead><tbody>${reports.map(r=>`<tr><td>${esc(r)}</td></tr>`).join("")||'<tr><td>No data</td></tr>'}</tbody></table></div></div></div></details>
+  ${u.certs?`<details open><summary>Credentials</summary><div class="actions" style="margin-bottom:6px"><b style="flex:1">Licences &amp; certifications</b>${ex("t_cert","Credentials")}</div><div class="scroll"><table id="t_cert"><thead><tr><th>Credential</th><th>Issuer</th><th>Achieved</th><th>Status</th></tr></thead><tbody>${u.certs.map(c=>`<tr><td>${c[0]}</td><td>${c[1]}</td><td>${c[2]}</td><td><span class="tag ok">${c[3]}</span></td></tr>`).join("")}</tbody></table></div></details>`:""}
+  <details open><summary>History</summary><div class="two">
+   <div><div class="actions" style="margin-bottom:6px"><b style="flex:1">Logs</b>${ex("t_log","Logs")}</div><div class="box"><table id="t_log"><thead><tr><th>Timestamp</th><th>Agent</th><th>Event</th></tr></thead><tbody id="logb"></tbody></table></div></div>
+   <div><div class="actions" style="margin-bottom:6px"><b style="flex:1">Devices assigned</b>${ex("t_dev","Devices")}</div><div class="box"><table id="t_dev"><thead><tr><th>Name</th><th>Description</th></tr></thead><tbody>${u.devices.map(d=>`<tr><td><a href="#" onclick="toast('Device page not in demo','e');return false">${d[0]}</a></td><td>${d[1]}</td></tr>`).join("")}</tbody></table></div></div></div></details></div></div>`;
+  logs();
+  if(!u._seen){u._seen=1;log(u,"Properties loaded for: "+u.sam);logs()}
+  if(term)setTimeout(()=>modal("<span style='color:var(--bad)'>⚠ This account appears terminated or disabled</span>",
+   `<p>Suggested process for terminated accounts:</p><ul><li>Reset the password without giving it to the caller.</li><li>Expire the AD account.</li><li>Reset and revoke the MFA profile.</li><li>Add to the description: DO NOT RESET [initials] [date].</li><li>Direct the caller to the account termination form.</li><li>Confirm with a supervisor, then notify the access-admin team.</li></ul><hr><p>Detected: Enabled = <b>${u.enabled?"Enabled":"Disabled"}</b><br>Description: ${esc(u.desc)}<br>Tickets: ${tix(u.desc)}</p>`),700);
+  else if(ticket)setTimeout(()=>modal("<span style='color:var(--bad)'>⚠ Ticket number found on this account</span>",
+   `<p>Ticket numbers in the description may contain termination requests, re-hire requests, history or an ongoing issue.</p><p>Ticket(s): ${tix(u.desc)}</p>`),700)}
+const tix=d=>(d.match(/(RITM|INC)\d+/gi)||[]).map(t=>`<a href="#" onclick="toast('Would open ${t} in your ticketing system');return false">${t}</a>`).join(", ")||"none";
+const logs=()=>{const b=$("#logb");if(b)b.innerHTML=(LOGS[cur.id]||[]).map(l=>`<tr><td>${l[0]}</td><td>${l[1]}</td><td>${esc(l[2])}</td></tr>`).join("")};
+const u_proxy=()=>cur.proxy.map(p=>p.startsWith("SMTP:")?`<span class="tag">PRIMARY</span> ${esc(p)}`:esc(p));
+function list(t,items,tip){modal(t,(tip?`<p class="note">${tip}</p>`:"")+(items.length?`<table><tbody>${items.map(i=>`<tr><td>${i}</td></tr>`).join("")}</tbody></table>`:"No data available"))}
+function mgrModal(){const m=byId(cur.mgr);if(!m)return modal("Manager details","No manager on record.");
+  modal("Manager details",`<table><tbody>${[["Display name",m.first+" "+m.last],["E-mail",m.mail],["Title",m.title],["Employee number",m.emp],["Mobile",m.mobile],["Department",m.dept],["City",m.city],["Country",m.country]].map(r=>`<tr><td>${r[0]}</td><td>${esc(r[1])}</td></tr>`).join("")}</tbody></table>`,
+  [{t:"Open properties",c:"p",f:()=>{location.hash="user-"+m.id}}])}
+function doUnlock(){if(!cur.locked){toast(cur.sam+" is not locked out");return}
+  cur.locked=false;log(cur,"Account unlocked: "+cur.sam);user();toast("User "+cur.sam+" unlocked successfully")}
+
+function genPw(){const L=+$("#plen").value,s=[["uppercase","ABCDEFGHJKLMNPQRSTUVWXYZ"],["lowercase","abcdefghijkmnopqrstuvwxyz"],["numbers","23456789"],["symbols","!@#$%&*?"]].filter(x=>$("#"+x[0]).checked).map(x=>x[1]);
+  if(!s.length){toast("Pick at least one character set","e");return}
+  const a=s.join(""),r=new Uint32Array(L);crypto.getRandomValues(r);
+  let p=[...r].map(n=>a[n%a.length]);s.forEach((set,i)=>p[i]=set[r[i]%set.length]);$("#gen").value=p.join("");$("#pw1").value=$("#pw2").value=$("#gen").value}
+function resetPw(){
+  modal("Reset password",`<div id="perr" class="warn" style="display:none;border-color:var(--bad)"></div>
+  <label>Password</label><input type="password" id="pw1" maxlength="32"><label>Confirm password</label><input type="password" id="pw2" maxlength="32">
+  <label><input type="checkbox" onchange="pw1.type=pw2.type=this.checked?'text':'password'"> Show passwords</label><hr style="border:0;border-top:1px solid var(--line)">
+  <label>Generated password</label><div class="actions"><input type="text" id="gen" style="flex:1" readonly><button class="sm" onclick="navigator.clipboard&&gen.value&&navigator.clipboard.writeText(gen.value).then(()=>toast('Copied'))">Copy</button></div>
+  <label>Length: <b id="lo">12</b></label><input type="range" id="plen" min="10" max="20" value="12" oninput="lo.textContent=this.value">
+  <div><label class="opt"><input type="checkbox" id="uppercase" checked>Uppercase</label><label class="opt"><input type="checkbox" id="lowercase" checked>Lowercase</label><label class="opt"><input type="checkbox" id="numbers" checked>Numbers</label><label class="opt"><input type="checkbox" id="symbols">Symbols</label></div>
+  <button style="margin-top:10px" onclick="genPw()">Generate password</button>`,
+  [{t:"Reset",c:"p",f:()=>{const a=$("#pw1").value,b=$("#pw2").value,e=$("#perr");
+    if(!a||!b){e.textContent="Both fields are required.";e.style.display="block";return false}
+    if(a!==b){e.textContent="Passwords do not match.";e.style.display="block";return false}
+    cur.locked=false;cur.pwSet=new Date().toISOString().slice(0,16).replace("T"," ");cur.pwAge="0 days";
+    log(cur,"Successfully changed the password for: "+cur.sam);user();toast("Password changed for "+cur.sam)}}])}
+
+// ---------- Router ----------
+function route(){const h=location.hash.slice(1);
+  if(h.startsWith("user-")){cur=byId(h.slice(5));if(cur)return user()}
+  home()}
+$("#sf").onsubmit=e=>{e.preventDefault();go($("#q").value.trim())};
+addEventListener("hashchange",()=>{$("#dlg").open&&$("#dlg").close();route()});
+route();
+</script>
+</body>
+</html>
